@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DEPLOY_PATH = '/var/www/html/laravel-local'
-    }
-
     stages {
         stage('Checkout Code') {
             steps {
@@ -14,27 +10,26 @@ pipeline {
 
         stage('Install Composer Dependencies') {
             steps {
-                sh 'composer install --no-interaction --prefer-dist --optimize-autoloader'
+                bat 'composer install --no-interaction --prefer-dist --optimize-autoloader'
             }
         }
 
         stage('Setup Environment File') {
             steps {
-                sh '''
-                    if [ ! -f .env ]; then
-                        cp .env.example .env
+                bat '''
+                    if not exist .env (
+                        copy .env.example .env
                         php artisan key:generate
-                    fi
+                    )
                 '''
             }
         }
 
         stage('Deploy to Local Directory') {
             steps {
-                sh '''
-                    sudo mkdir -p ${DEPLOY_PATH}
-                    sudo chown -R $USER:$USER ${DEPLOY_PATH}
-                    rsync -av --exclude='.git' . ${DEPLOY_PATH}/
+                bat '''
+                    if not exist C:\\xampp\\htdocs\\laravel-local mkdir C:\\xampp\\htdocs\\laravel-local
+                    xcopy /E /I /Y . C:\\xampp\\htdocs\\laravel-local
                 '''
             }
         }
