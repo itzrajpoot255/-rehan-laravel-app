@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        EC2_HOST = 'YOUR_EC2_PUBLIC_IP' // Yahan apni EC2 ki Public IP dalein
+        EC2_HOST = '16.170.227.192'
         EC2_USER = 'ubuntu'
     }
 
