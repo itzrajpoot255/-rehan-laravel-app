@@ -10,20 +10,27 @@ pipeline {
 
         stage('Install Composer Dependencies') {
             steps {
-                bat 'composer install --no-interaction'
+                sh 'composer install --no-interaction --prefer-dist --optimize-autoloader'
             }
         }
 
         stage('Setup Environment File') {
             steps {
-                bat 'copy .env.example .env'
-                bat 'php artisan key:generate'
+                sh '''
+                    if [ ! -f .env ]; then
+                        cp .env.example .env
+                        php artisan key:generate
+                    fi
+                '''
             }
         }
 
         stage('Deploy to Local Directory') {
             steps {
-                bat 'xcopy /E /I /Y . C:\\xampp\\htdocs\\laravel-local'
+                sh '''
+                    mkdir -p /var/www/html/laravel-local
+                    cp -r . /var/www/html/laravel-local/
+                '''
             }
         }
     }
