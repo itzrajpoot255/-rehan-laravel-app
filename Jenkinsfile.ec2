@@ -16,10 +16,8 @@ pipeline {
         stage('Deploy to AWS EC2 via SSH') {
             steps {
                 sshagent(['ec2-ssh-key']) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} "sudo mkdir -p /var/www/html/laravel-ec2 && sudo chown -R ${EC2_USER}:${EC2_USER} /var/www/html/laravel-ec2"
-                        scp -o StrictHostKeyChecking=no -r . ${EC2_USER}@${EC2_HOST}:/var/www/html/laravel-ec2/
-                    '''
+                    sh 'ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} "sudo mkdir -p /var/www/html/laravel-ec2 && sudo chown -R ${EC2_USER}:${EC2_USER} /var/www/html/laravel-ec2"'
+                    sh 'scp -o StrictHostKeyChecking=no -r . ${EC2_USER}@${EC2_HOST}:/var/www/html/laravel-ec2/'
                 }
             }
         }
