@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Deploy Docker to EC2') {
+            steps {
+                sshagent(['ec2-ssh-key']) {
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@16.170.227.192 "sudo mkdir -p /var/www/html/laravel-docker && sudo chown -R ubuntu:ubuntu /var/www/html/laravel-docker"'
+                    sh 'scp -o StrictHostKeyChecking=no -r . ubuntu@16.170.227.192:/var/www/html/laravel-docker/'
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@16.170.227.192 "cd /var/www/html/laravel-docker && sudo docker compose up -d --build"'
+                }
+            }
+        }
+    }
+}
